@@ -7,14 +7,7 @@ export ZSH_THEME=robbyrussell
 source $ZSH/zsh/theme.zsh
 
 # your project folder that we can `c [tab]` to
-export PROJECTS=~/Programming
-
-# use .localrc for SUPER SECRET CRAP that you don't
-# want in your public, versioned repo.
-if [[ -a ~/.localrc ]]
-then
-  source ~/.localrc
-fi
+export PROJECTS=~/
 
 # all of our zsh files
 typeset -U config_files
@@ -43,6 +36,3 @@ do
 done
 
 unset config_files
-
-### Added by the Heroku Toolbelt
-export PATH="/usr/local/heroku/bin:$PATH"
