@@ -27,19 +27,27 @@ brew install findutils
 brew install zsh
 
 # Install more recent versions of some OSX tools.
-brew install vim --override-system-vi
+brew install macvim
 brew install homebrew/dupes/grep
-brew install homebrew/dupes/openssh --with-keychain-support
-brew install homebrew/dupes/screen
 
 binaries=(
+  ack
+  ctags
+  fpp
   git
-  hub
+  mackup
+  node
+  nvm
   postgresql
+  readline
+  reattach-to-user-namespace
   redis
+  the_silver_searcher
+  tmux
   tree
   watch
 )
+
 brew install ${binaries[@]}
 
 # Install brew services
@@ -55,10 +63,13 @@ casks=(
   alfred
   atom
   caffeine
+  dash
   dropbox
   firefox
   flowdock
   flux
+  font-roboto
+  gimp
   google-chrome
   google-drive
   heroku-toolbelt
@@ -67,26 +78,17 @@ casks=(
   mailbox
   mou
   psequel
+  radiant-player
   recordit
-  sequel-pro
-  skype
   slack
   sublime-text3
   the-unarchiver
   things
+  todoist
+  trello-x
   virtualbox
 )
 brew cask install ${casks[@]}
-
-echo "Can't install:
-
-ColorSnapper
-Pixelmator
-Pixen
-Reeder
-TomatoTimer
-
-with casks. Use the Mac App Store."
 
 # Ensure that homebrew-cask apps are available to alfred
 brew cask alfred link
