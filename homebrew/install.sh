@@ -35,6 +35,7 @@ binaries=(
   ctags
   fpp
   git
+  hub
   mackup
   node
   nvm
