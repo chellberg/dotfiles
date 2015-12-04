@@ -71,7 +71,6 @@ function install_jsctags {
 source $(brew --prefix nvm)/nvm.sh
 
 export DISABLE_AUTO_TITLE=true
-export PATH="/usr/local/sbin:/usr/local/bin:/Users/Corin/conf:$PATH"
 export NVM_DIR=~/.nvm
 # export ZSH_THEME="miloshadzic"
 export PGDATA="/usr/local/var/postgres"

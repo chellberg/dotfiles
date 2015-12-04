@@ -1,1 +1,1 @@
-export PATH="./bin:/usr/local/bin:/usr/local/sbin:$ZSH/bin:$HOME/.cabal/bin:$PATH"
+export PATH="/usr/local/sbin:/usr/local/bin:/Users/Corin/conf:$PATH"
