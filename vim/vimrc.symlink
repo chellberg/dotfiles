@@ -1,4 +1,371 @@
-syntax on
+set nocompatible              " be iMproved, required
+filetype off                  " required
 
-" Wrap gitcommit file types at the appropriate length
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" let Vundle manage Vundle, required
+Plugin 'gmarik/Vundle.vim'
+
+" Keep Plugin commands between vundle#begin/end.
+Plugin 'tpope/vim-fugitive'
+Plugin 'vim-ruby/vim-ruby'
+Plugin 'kana/vim-textobj-user'
+Plugin 'nelstrom/vim-textobj-rubyblock'
+Plugin 'tpope/vim-bundler'
+Plugin 'tpope/vim-rake'
+Plugin 'tpope/vim-unimpaired'
+Plugin 'tpope/vim-rails'
+Plugin 'kchmck/vim-coffee-script'
+Plugin 'christoomey/vim-tmux-navigator'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'kien/ctrlp.vim'
+Plugin 'flazz/vim-colorschemes'
+Plugin 'xolox/vim-misc'
+Plugin 'mxw/vim-jsx'
+Plugin 'pangloss/vim-javascript'
+Plugin 'tpope/vim-surround'
+Plugin 'mileszs/ack.vim'
+Plugin 'rking/ag.vim'
+Plugin 'tpope/vim-endwise'
+Plugin 'edkolev/tmuxline.vim'
+Plugin 'scrooloose/nerdtree'
+Plugin 'bling/vim-airline'
+Plugin 'scrooloose/syntastic'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'tpope/vim-repeat'
+Plugin 'tpope/vim-commentary'
+Plugin 'Yggdroot/indentLine'
+Plugin 'henrik/vim-ruby-runner'
+" Plugin 'Floobits/floobits-vim'
+Plugin 'SirVer/ultisnips'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'ervandew/supertab'
+Plugin 'rizzatti/dash.vim'
+Plugin 'lambdatoast/elm.vim'
+Plugin 'Raimondi/delimitMate'
+Plugin 'godlygeek/tabular'
+Plugin 'moll/vim-node'
+Plugin 'othree/javascript-libraries-syntax.vim'
+Plugin 'ngmy/vim-rubocop'
+
+" from jlindsey
+Plugin 'mattn/webapi-vim' " required for gist-vim
+Plugin 'mattn/gist-vim'
+Plugin 'haya14busa/vim-easymotion'
+" Plugin 'mhinz/vim-startify' someday
+Plugin 'tpope/vim-abolish'
+call vundle#end()
+
+runtime macros/matchit.vim " Enabling the matchit plugin will enhance Vim’s built-in % command, making it possible to jump between pairs of Ruby keywords, such as class, module, def, if, do, and their corresponding end 
+
+set backup
+set backupdir=~/.vim/backup
+set directory=~/.vim/tmp
+
+filetype on
+syntax on
 filetype indent plugin on
+
+set hlsearch
+set ignorecase
+set smartcase
+set backspace=indent,eol,start
+set autoindent
+set nostartofline
+set ruler
+set laststatus=2
+set confirm
+set visualbell
+set cmdheight=2
+set number
+set notimeout ttimeout ttimeoutlen=200
+set pastetoggle=<F11>
+set shiftwidth=2
+set softtabstop=2
+set expandtab
+set ttyfast
+set lazyredraw
+set scrolloff=15
+set nohidden
+set incsearch
+set matchtime=2 
+
+" Pane/split settings
+set splitbelow
+set splitright
+
+" autosave/autoload view
+au BufWritePost,BufLeave,WinLeave ?* mkview
+au BufWinEnter ?* silent loadview
+
+" save and load sessions
+nnoremap <F1> :mksession! .quicksave.vim<CR>
+nnoremap <F2> :source .quicksave.vim<CR>
+
+" navigate between panes with ctrl+<dir>
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+" switch tabs vim-style
+nnoremap tl :tabnext<CR>
+nnoremap th :tabprev<CR>
+nnoremap tn :tabnew<CR>
+
+" Edit vimrc \ev
+nnoremap <silent> <Leader>ev :tabnew<CR>:e ~/.vimrc<CR>
+
+" Search mappings: These will make it so that going to the next one in a
+" search will center on the line it's found in.
+map N Nzz
+map n nzz
+
+map Y y$
+
+" Clear highlights (can't find good key for it atm)
+nnoremap <C-I> :nohl<CR><C-H>
+
+" regen ctags
+command! GenerateTags call system('ctags -Rf ./.tags --exclude=.git `cat .srclist`') | echo
+nnoremap <F4> :GenerateTags<CR>
+
+" configure tag dir
+set tags=tags;/
+
+" colorscheme 256-grayvim 
+
+" CtrlP
+nnoremap <C-G> :CtrlPBuffer<CR>
+nnoremap <C-T> :CtrlPTag<CR>
+let g:ctrlp_max_files = 20000
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP .'
+let g:ctrlp_extensions = ['mixed', 'tag', 'quickfix', 'changes']
+let g:ctrlp_regexp = 1
+" let g:ctrlp_by_filename = 1
+let g:ctrlp_match_window = 'bottom,order:btt,min:1,max:15'
+
+" vimgrep and CtrlP use Ag
+if executable('ag')
+  set grepprg=ag\ --nogroup\ --nocolor
+"  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+  let g:ctrlp_user_command = 'ag %s -l -g ""'
+  let g:ctrlp_use_caching = 0
+  let g:aghighlight=1
+  " let g:ag_lhandler="topleft lopen"
+  let g:ag_qhandler="copen 20"
+endif
+
+" backups/persistent undo history
+set undofile
+set backup
+set noswapfile
+
+set undodir=~/.vim/tmp/undo/
+set backupdir=~/.vim/tmp/backup/
+set directory=~/.vim/tmp/swap/
+
+if !isdirectory(expand(&undodir))
+  call mkdir(expand(&undodir), "p")
+endif
+if !isdirectory(expand(&backupdir))
+  call mkdir(expand(&backupdir), "p")
+endif
+if !isdirectory(expand(&directory))
+  call mkdir(expand(&directory), "p")
+endif
+
+" tmuxline.vim
+" let g:tmuxline_preset = 'tmux'
+" let g:tmuxline_theme = 'powerline'
+
+" lightline.vim
+" let g:lightline = {
+ "      \ 'colorscheme': 'powerline',
+  "     \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
+   "    \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" }
+    "   \ }
+" set noshowmode
+" set ambiwidth=double
+
+" NERDTree
+map <C-n> :NERDTreeToggle<CR>
+
+" airline.vim
+let g:airline_powerline_fonts = 1 
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#syntastic#enabled = 1
+let g:airline#extensions#whitespace#enabled = 0
+let g:airline#extensions#tabline#buffer_nr_show = 0
+let g:airline#extensions#ctrlp#color_template = 'visual'
+"let g:airline#extensions#tabline#fnamecollapse = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+let g:airline#extensions#tabline#show_close_button = 0
+let g:airline#extensions#tmuxline#enabled = 1
+let g:airline_theme = 'bubblegum'
+
+" newline without entering insert mode
+nmap <CR> o<Esc>
+nmap <S-Enter> O<Esc>
+
+" paste buffer while in insert mode
+inoremap <C-V> <C-R>"
+
+" jj exits insert mode
+inoremap jj <ESC>
+
+" syntastic
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 0
+let g:syntastic_javascript_checkers = ['eslint']
+
+" indentLine
+let g:indentLine_enabled = 0
+let g:indentLine_color_term = 239
+" g:indentLine_faster = 0
+let g:indentLine_leadingSpaceEnabled = 1
+let g:indentLine_leadingSpaceChar = '·'
+
+" run ruby code with Leader r
+" nnoremap <silent> <Leader>r :!ruby %<CR>
+let g:RubyRunner_open_below = 1
+let g:RubyRunner_key = '<Leader>R'
+let g:RubyRunner_keep_focus_key = '<Leader>r'
+
+" begin stolen from Miles v v v v v
+
+" Remove trailing whitespace
+noremap <silent> <Leader>rtw :%s/\s\+$//g<CR>``
+
+" Map ,cd to change to the directory of the file being edited
+map ,cd :cd %:p:h<CR>
+
+" Map C-x to execute the current line in bash and paste the output to the next line
+map <C-x> yyp!!sh<CR><Esc>
+
+" Use the mouse in terminal Vim!
+set mouse=a
+set ttymouse=xterm2
+
+" RSpec.vim mappings
+" map <Leader>t :call RunCurrentSpecFile()<CR>
+" map <Leader>s :call RunNearestSpec()<CR>
+" map <Leader>l :call RunLastSpec()<CR>
+" map <Leader>a :call RunAllSpecs()<CR>"
+
+" Split faster
+nmap <silent> vv :vsp<CR>
+nmap <silent> ss :sp<CR>
+
+" end stolen from Miles ^ ^ ^ ^ ^
+
+nnoremap ; :
+vnoremap ; :
+" <C-R><C-W> *<CR>
+:nnoremap ,f :Ag <C-R><C-W> <CR>
+:nnoremap ,n :cn <CR>
+" :nnoremap ,e :vs ~/sourcing/config/locales/en.yml <CR>
+
+function! WrapForTmux(s)
+  if !exists('$TMUX')
+    return a:s
+  endif
+
+  let tmux_start = "\<Esc>Ptmux;"
+  let tmux_end = "\<Esc>\\"
+
+  return tmux_start . substitute(a:s, "\<Esc>", "\<Esc>\<Esc>", 'g') . tmux_end
+endfunction
+
+let &t_SI .= WrapForTmux("\<Esc>[?2004h")
+let &t_EI .= WrapForTmux("\<Esc>[?2004l")
+
+function! XTermPasteBegin()
+  set pastetoggle=<Esc>[201~
+  set paste
+  return ""
+endfunction
+
+inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
+
+" https://gist.github.com/lencioni/dff45cd3d1f0e5e23fe6
+" make YCM compatible with UltiSnips (using supertab)
+let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+let g:SuperTabDefaultCompletionType = '<C-n>'
+
+" better key bindings for UltiSnipsExpandTrigger
+let g:UltiSnipsExpandTrigger = "<tab>"
+let g:UltiSnipsJumpForwardTrigger = "<tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+
+" unhide quotes in JSON
+set conceallevel=0
+
+:nmap <silent> <leader>d <Plug>DashGlobalSearch
+
+" Tabular bindings from Vimcasts
+let mapleader=','
+
+if exists(":Tabularize")
+  nmap <Leader>a= :Tabularize /=<CR>
+  vmap <Leader>a= :Tabularize /=<CR>
+  nmap <Leader>a: :Tabularize /:\zs<CR>
+  vmap <Leader>a: :Tabularize /:\zs<CR>
+endif
+
+let g:vimrubocop_config = '/Users/Corin/rms/.rubocop.yml'
+
+" set autocomplete popup menu to somewhat readable color
+" (some color schemes have bad default here)
+function! ResetPopupMenu()
+  highlight Pmenu guibg=black guifg=lightmagenta
+  highlight Pmenusel guibg=lightmagenta guifg=black
+endfunction
+
+" Colorscheme stuff
+function! RandomColorscheme()
+  " random color, from http://vim.1045645.n5.nabble.com/Random-color-scheme-at-start-td1165585.html
+  let mycolors = split(globpath(&rtp,"**/colors/*.vim"),"\n")
+  let i = localtime() % len(mycolors)
+  exe 'so ' . mycolors[i]
+  unlet mycolors
+  highlight clear SignColumn " important for vim-gitgutter plugin to not look strange
+  "if s:hilightdebugging
+  "  call TurnOnDebuggingMatching()  " restore my custom debugging highlighting if we were using it
+  "endif
+  call ResetPopupMenu()
+  " need to reset the css colors after calling random colorscheme
+  " source ~/conf/common/.vim/bundle/vim-css-color/after/syntax/css.vim
+endfunction
+
+nnoremap <leader>co <Esc>:call RandomColorscheme()<CR>
+
+if !exists("g:randomizedColorsOnStart")
+  call RandomColorscheme()
+endif
+
+" might speed up opening ruby files and/or syntax highlighting
+let g:ruby_path="/Users/Corin/.rbenv/shims/ruby"
+
+
+" debugging performance lag
+" disabling cursorline massively improves scrolling performance
+set nocursorline
+
+" scroll 8 lines at a time at top/bottom of file
+set scrolljump=8
+
+" not needed now but other possible optimizations:
+" let loaded_matchparen=1 " Don't load matchit.vim (paren/bracket matching)
+" set noshowmatch         " Don't match parentheses/brackets
+
