@@ -20,7 +20,6 @@ Plugin 'tpope/vim-rails'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'altercation/vim-colors-solarized'
-Plugin 'kien/ctrlp.vim'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'xolox/vim-misc'
 Plugin 'mxw/vim-jsx'
@@ -30,7 +29,7 @@ Plugin 'mileszs/ack.vim'
 Plugin 'rking/ag.vim'
 Plugin 'tpope/vim-endwise'
 Plugin 'edkolev/tmuxline.vim'
-Plugin 'scrooloose/nerdtree'
+" Plugin 'scrooloose/nerdtree'
 Plugin 'bling/vim-airline'
 Plugin 'scrooloose/syntastic'
 Plugin 'airblade/vim-gitgutter'
@@ -49,6 +48,15 @@ Plugin 'godlygeek/tabular'
 Plugin 'moll/vim-node'
 Plugin 'othree/javascript-libraries-syntax.vim'
 Plugin 'ngmy/vim-rubocop'
+Plugin 'junegunn/fzf.vim'
+Plugin 'elixir-lang/vim-elixir'
+Plugin 'plasticboy/vim-markdown'
+
+" writing plugins
+Plugin 'junegunn/goyo.vim'
+Plugin 'junegunn/limelight.vim'
+Plugin 'reedes/vim-colors-pencil'
+Plugin 'reedes/vim-pencil'
 
 " from jlindsey
 Plugin 'mattn/webapi-vim' " required for gist-vim
@@ -56,6 +64,20 @@ Plugin 'mattn/gist-vim'
 Plugin 'haya14busa/vim-easymotion'
 " Plugin 'mhinz/vim-startify' someday
 Plugin 'tpope/vim-abolish'
+
+" maybe fix Haml highlighting
+" this wasn't the problem, but does get more up to date Haml syntax support
+" than latest Vim, so may not remove
+Plugin 'tpope/vim-haml'
+Plugin 'ludovicchabant/vim-gutentags'
+
+Plugin 'slim-template/vim-slim'
+Plugin 'tpope/vim-ragtag'
+Plugin 'michaeljsmith/vim-indent-object'
+Plugin 'terryma/vim-multiple-cursors'
+Plugin 'tpope/vim-vinegar'
+Plugin 'jceb/vim-orgmode'
+
 call vundle#end()
 
 runtime macros/matchit.vim " Enabling the matchit plugin will enhance Vim’s built-in % command, making it possible to jump between pairs of Ruby keywords, such as class, module, def, if, do, and their corresponding end 
@@ -87,7 +109,7 @@ set softtabstop=2
 set expandtab
 set ttyfast
 set lazyredraw
-set scrolloff=15
+set scrolloff=10
 set nohidden
 set incsearch
 set matchtime=2 
@@ -127,7 +149,7 @@ map n nzz
 map Y y$
 
 " Clear highlights (can't find good key for it atm)
-nnoremap <C-I> :nohl<CR><C-H>
+nnoremap <C-C> :nohl<CR><C-H>
 
 " regen ctags
 command! GenerateTags call system('ctags -Rf ./.tags --exclude=.git `cat .srclist`') | echo
@@ -136,29 +158,30 @@ nnoremap <F4> :GenerateTags<CR>
 " configure tag dir
 set tags=tags;/
 
-" colorscheme 256-grayvim 
+colorscheme seoul256
 
-" CtrlP
-nnoremap <C-G> :CtrlPBuffer<CR>
-nnoremap <C-T> :CtrlPTag<CR>
-let g:ctrlp_max_files = 20000
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlP .'
-let g:ctrlp_extensions = ['mixed', 'tag', 'quickfix', 'changes']
-let g:ctrlp_regexp = 1
-" let g:ctrlp_by_filename = 1
-let g:ctrlp_match_window = 'bottom,order:btt,min:1,max:15'
+" " CtrlP
+" nnoremap <C-G> :CtrlPBuffer<CR>
+" nnoremap <C-T> :CtrlPTag<CR>
+" let g:ctrlp_max_files = 20000
+" let g:ctrlp_map = '<c-p>'
+" let g:ctrlp_cmd = 'CtrlP .'
+" let g:ctrlp_extensions = ['mixed', 'tag', 'quickfix', 'changes']
+" let g:ctrlp_regexp = 1
+" " let g:ctrlp_by_filename = 1
+" let g:ctrlp_match_window = 'bottom,order:btt,min:1,max:15'
+" let g:ctrlp_open_multiple_files = 't'
 
-" vimgrep and CtrlP use Ag
-if executable('ag')
-  set grepprg=ag\ --nogroup\ --nocolor
-"  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-  let g:ctrlp_user_command = 'ag %s -l -g ""'
-  let g:ctrlp_use_caching = 0
-  let g:aghighlight=1
-  " let g:ag_lhandler="topleft lopen"
-  let g:ag_qhandler="copen 20"
-endif
+" " vimgrep and CtrlP use Ag
+" if executable('ag')
+"   set grepprg=ag\ --nogroup\ --nocolor
+" "  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+"   let g:ctrlp_user_command = 'ag %s -l -g ""'
+"   let g:ctrlp_use_caching = 0
+"   let g:ag_highlight=1
+"   " let g:ag_lhandler="topleft lopen"
+"   let g:ag_qhandler="copen 20"
+" endif
 
 " backups/persistent undo history
 set undofile
@@ -206,7 +229,7 @@ let g:airline#extensions#ctrlp#color_template = 'visual'
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 let g:airline#extensions#tabline#show_close_button = 0
 let g:airline#extensions#tmuxline#enabled = 1
-let g:airline_theme = 'bubblegum'
+" let g:airline_theme = 'bubblegum'
 
 " newline without entering insert mode
 nmap <CR> o<Esc>
@@ -225,19 +248,28 @@ set statusline+=%*
 
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
+let g:syntastic_loc_list_height = 5
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 1
 let g:syntastic_javascript_checkers = ['eslint']
 let g:syntastic_javascript_eslint_exec = 'eslint_d'
 let g:syntastic_ruby_checkers=['rubocop', 'mri']
-" trial basis
-let g:syntastic_javascript_eslint_exec='./client/node_modules/.bin/eslint'
+" trials
+let g:syntastic_error_symbol = '❌'
+let g:syntastic_style_error_symbol = '⁉️'
+let g:syntastic_warning_symbol = '⚠️'
+let g:syntastic_style_warning_symbol = '💩'
+" highlight link SyntasticErrorSign SignColumn
+" highlight link SyntasticWarningSign SignColumn
+" highlight link SyntasticStyleErrorSign SignColumn
+" highlight link SyntasticStyleWarningSign SignColumn
+let g:gitgutter_sign_column_always = 1
 
 " indentLine
 let g:indentLine_enabled = 0
 let g:indentLine_color_term = 239
 " g:indentLine_faster = 0
-let g:indentLine_leadingSpaceEnabled = 1
+let g:indentLine_leadingSpaceEnabled = 0
 let g:indentLine_leadingSpaceChar = '·'
 
 " run ruby code with Leader r
@@ -255,7 +287,7 @@ noremap <silent> <Leader>rtw :%s/\s\+$//g<CR>``
 map ,cd :cd %:p:h<CR>
 
 " Map C-x to execute the current line in bash and paste the output to the next line
-map <C-x> yyp!!sh<CR><Esc>
+" map <C-x> yyp!!sh<CR><Esc>
 
 " Use the mouse in terminal Vim!
 set mouse=a
@@ -380,3 +412,92 @@ set shortmess=at
 " fix bad results of !echo $PATH
 " and resultant syntastic problems caused by using system ruby
 set shell=zsh
+
+" fzf defaults from fzf.zim repo
+
+" This is the default extra key bindings
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-v': 'vsplit' }
+
+" Default fzf layout
+" - down / up / left / right
+" - window (nvim only)
+let g:fzf_layout = { 'down': '~40%' }
+
+" For Commits and BCommits to customize the options used by 'git log':
+let g:fzf_commits_log_options = '--graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr"'
+
+" Advanced customization using autoload functions
+autocmd VimEnter * command! Colors
+  \ call fzf#vim#colors({'left': '15%', 'options': '--reverse --margin 30%,0'})
+
+
+" not sure what these do exactly, enabling to test
+
+" Mapping selecting mappings
+nmap <leader><tab> <plug>(fzf-maps-n)
+xmap <leader><tab> <plug>(fzf-maps-x)
+omap <leader><tab> <plug>(fzf-maps-o)
+
+" Insert mode completion
+imap <c-x><c-k> <plug>(fzf-complete-word)
+imap <c-x><c-f> <plug>(fzf-complete-path)
+imap <c-x><c-j> <plug>(fzf-complete-file-ag)
+imap <c-x><c-l> <plug>(fzf-complete-line)
+
+" Advanced customization using autoload functions
+inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'left': '15%'})
+
+" fix unknown command fzf#run error - unnecessary if using vim-plug
+set rtp+=~/.fzf
+
+" nmap <C-t> :FZF<CR>
+nmap <C-p> :call fzf#vim#files('', {'source': 'ag --hidden --ignore .git -f -g ""', 'down': '40%'})<cr> 
+"nmap <C-p> :FZF<CR>
+
+" writing with vim
+
+function! Writing()
+  set nonumber
+  " set guioptions-=r right
+  " set guioptions-=L left
+  " set guioptions-=T toolbars
+  " set guioptions-=m menus
+  set guicursor=a:blinkon0
+  set laststatus=1 " hide status bar if only one file open"
+  set wrap
+  set linebreak
+  color herokudoc-gvim
+  " color=norwaytoday
+
+  nnoremap j gj
+  nnoremap k gk
+  nnoremap 0 g0
+  nnoremap $ g$
+
+  set whichwrap=b,s,<,>,[,],h,l
+  inoremap <C-BS> <C-W>
+  " forward and backward sentences with ( and )
+  " set spell
+  " zg - spell good
+  " zug - spell undo good
+  "
+  let g:indentLine_leadingSpaceEnabled = 0
+  " disable ycm because when it randomly works (maybe orgmode only, not sure)
+  " it's really really annoying
+  let b:ycm_largefile=1
+  Goyo 80
+  Limelight 0.6
+endfunction
+
+map <Leader>w :call Writing()<CR>
+" fix stupid vim-json formatting
+set conceallevel=0
+
+nmap <leader>s vii:!sort<cr>
+
+let g:ragtag_global_maps = 1 
+
+let g:vim_markdown_folding_disabled = 1
