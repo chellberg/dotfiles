@@ -108,9 +108,6 @@ casks=(
 )
 brew cask install ${casks[@]}
 
-# Ensure that homebrew-cask apps are available to alfred
-brew cask alfred link
-
 # Install some fonts
 brew tap caskroom/fonts
 
