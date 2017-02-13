@@ -31,22 +31,37 @@ brew install macvim
 brew install homebrew/dupes/grep
 
 binaries=(
-  ack
+  # soji dependencies
+  brightness
+  guile
+  terminal-notifier
+
+  # fix access to system clipboard from inside tmux
+  reattach-to-user-namespace
+
+  # editors
+  macvim
+  neovim
+
+  # utilities
   ctags
   fpp
   git
+  htop
   hub
   mackup
-  node
-  nvm
-  postgresql
-  readline
-  reattach-to-user-namespace
-  redis
   the_silver_searcher
   tmux
   tree
   watch
+
+  # development
+  node
+  nvm
+  postgresql
+  python
+  python3
+  rbenv
 )
 
 brew install ${binaries[@]}
@@ -55,7 +70,8 @@ brew install ${binaries[@]}
 brew tap homebrew/boneyard
 
 # Install Mac apps
-brew install caskroom/cask/brew-cask
+# I don't think cask needs to be installed separately anymore
+# brew install caskroom/cask/brew-cask
 
 # Access to betas for Chrome Canary, Sublime Text, etc
 brew tap caskroom/versions
@@ -69,6 +85,7 @@ casks=(
   firefox
   flowdock
   flux
+  flycut
   font-roboto
   gimp
   google-chrome
@@ -78,15 +95,15 @@ casks=(
   java
   mailbox
   mou
-  psequel
-  radiant-player
   recordit
+  skitch
   slack
+  soulver
   sublime-text3
   the-unarchiver
   things
   todoist
-  trello-x
+  torguard
   virtualbox
 )
 brew cask install ${casks[@]}
@@ -106,3 +123,8 @@ fonts=(
   font-roboto-slab
   font-yanone-kaffeesatz
 )
+
+echo "INSTALL ZIM MANUALLY: https://github.com/Eriner/zim"
+# can maybe do this with vim-plug eventually
+echo "also reminder to install powerline fonts https://github.com/powerline/fonts"
+
