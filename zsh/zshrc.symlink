@@ -1,38 +1,177 @@
-# shortcut to this dotfiles path is $ZSH
-export ZSH=$HOME/.dotfiles
+#
+# User configuration sourced by interactive shells
+#
 
-# use a theme
-# pattern and theme stolen from oh-my-zsh
-export ZSH_THEME=robbyrussell
-source $ZSH/zsh/theme.zsh
+# Source zim
+if [[ -s ${ZDOTDIR:-${HOME}}/.zim/init.zsh ]]; then
+  source ${ZDOTDIR:-${HOME}}/.zim/init.zsh
+fi
 
-# your project folder that we can `c [tab]` to
-export PROJECTS=~/
+source ~/.zsh-nvm/zsh-nvm.plugin.zsh
 
-# all of our zsh files
-typeset -U config_files
-config_files=($ZSH/**/*.zsh)
+eval "$(rbenv init -)"
 
-# load the path files
-for file in ${(M)config_files:#*/path.zsh}
-do
-  source $file
-done
+export PGDATA="/usr/local/var/postgres"
 
-# load everything but the path and completion files
-for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}
-do
-  source $file
-done
+bindkey "^[[A" up-line-or-beginning-search 
+bindkey "^[[B" down-line-or-beginning-search 
 
-# initialize autocomplete here, otherwise functions won't be loaded
-autoload -U compinit
-compinit
+source $HOME/.profile
 
-# load every completion after autocomplete loads
-for file in ${(M)config_files:#*/completion.zsh}
-do
-  source $file
-done
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
 
-unset config_files
+bindkey '^P' history-incremental-search-backward
+
+# -------------------------------------------------------------------
+# Git aliases
+# -------------------------------------------------------------------
+
+alias ga='git add --all && git status'
+alias py='python'
+alias grh='git reset HEAD *'
+alias unstage='git reset HEAD *'
+alias gp='git push'
+alias gl='git log'
+# alias gls='git log --stat'
+alias gs='git status'
+alias gd='git diff'
+alias gdc='git diff --cached'
+alias gm='git commit -m'
+alias gma='git commit -am'
+alias gb='git branch'
+alias gc='git checkout'
+alias gcom='git checkout master && git pull'
+alias gcb='git checkout -b'
+alias gra='git remote add'
+alias grr='git reset --hard `git reflog | fzf | cut -d '\'' '\'' -f 1`'
+alias gpu='git pull'
+alias gcl='git clone'
+alias gta='git tag -a -m'
+alias gf='git reflog'
+alias gsp='git status | fpp'
+alias grhh='git reset --hard HEAD'
+alias grc="git rebase --continue"
+alias gri="git rebase --interactive"
+alias griom="git rebase --interactive origin/master"
+alias grom="git rebase origin/master"
+alias grs="git rebase --skip"
+alias glgg='git log --color --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue) <%an>%Creset"'
+alias grpo='git remote prune origin'
+alias gap='git add --patch'
+alias glpw='git log --patch --ignore-all-space'
+alias rebasemaster='git checkout master && git pull && git checkout - && git rebase master'
+
+git-push-branch(){
+  CURRENT=$(git branch | grep '*' | awk '{print $2}')
+  git push -u origin "$CURRENT"
+}
+alias gpu=git-push-branch
+
+alias undocommit='noglob git reset --soft HEAD^'
+alias unstage='git reset HEAD *'
+
+# HealthPro specific
+#
+alias rmbjs='rm ~/rms/app/assets/javascripts/bundle.js'
+alias rmorig='rm **/*.orig'
+alias prodc='source /Users/Corin/rms/bin/catalyze.sh -E prod console rms01 "bundle exec rails console"'
+alias stagingc='source /Users/Corin/rms/bin/catalyze.sh -E staging console rms01 "bundle exec rails console"'
+alias dw='mux start rms'
+alias dwo='mux start onboarding'
+alias dww='mux start wellnest'
+alias dwww='tmuxinator start warmupweb'
+alias rl='bundle exec rake db:restore_prod_backup && rake db:migrate'
+alias cdr='cd ~/rms'
+alias ll='ls -l'
+
+# -------------------------------------------------------------------
+# OTHER aliases
+# -------------------------------------------------------------------
+ 
+alias cl='clear'
+alias vim='mvim -v'
+alias vi='mvim -v'
+alias -g G='|grep '
+alias -s html=vim
+alias -s erb=vim
+alias -s rb=vim
+
+alias tks='tmux kill-server'
+
+alias rdbm='rake db:migrate'
+alias rdbtp='rake db:test:prepare'
+
+alias be='bundle exec'
+alias ber='bundle exec rake'
+alias berdbm='bundle exec rake db:migrate'
+alias berc='bundle exec rails console'
+alias bers='bundle exec rails server'
+alias bert='bundle exec rake test'
+
+alias pryc='bundle exec pry -r ./config/environment'
+
+alias reload="source ~/.zshrc"
+unsetopt correct_all
+
+
+export EDITOR='mvim -v'
+# source ~/.bin/tmuxinator.zsh
+
+# vim mode in zsh
+bindkey -v
+# fix vim mode problems:
+# http://superuser.com/questions/476532/how-can-i-make-zshs-vi-mode-behave-more-like-bashs-vi-mode
+export KEYTIMEOUT=1
+bindkey -sM vicmd '^[' '^G'
+bindkey -rM viins '^X'
+bindkey -M viins '^X,' _history-complete-newer \
+                 '^X/' _history-complete-older \
+                 '^X`' _bash_complete-word
+
+export DISABLE_AUTO_TITLE=true
+export PATH="/usr/local/sbin:/usr/local/bin:/Users/Corin/conf:$PATH"
+
+function install_jsctags {
+  npm install jsctags
+  # https://github.com/mozilla/doctorjs/issues/52
+  gsed -i '51i tags: [],' ./node_modules/jsctags/jsctags/ctags/index.js
+}
+
+# find process using a given port
+whichport() {
+lsof -n -i4TCP:$1 | grep LISTEN
+}
+
+
+export ANDROID_HOME=/usr/local/opt/android-sdk
+
+# shitty hack to hopefully fix rbenv gem
+unset GEM_HOME
+unset GEM_PATH
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# http://unix.stackexchange.com/questions/68912/how-to-change-extension-of-all-files-in-a-directory
+autoload -U zmv
+alias zcp='zmv -C'
+alias zln='zmv -L'
+
+alias s='soji'
+
+# http://superuser.com/questions/735660/whats-the-zsh-equivalent-of-bashs-prompt-command
+
+# 'BASH_VERSION' only defined in Bash
+# 'PROMPT_COMMAND' is a special environment variable name known to Bash
+
+
+# function called every time shell is about to draw prompt
+
+# set default user so zsh/zim prompts know not to always show my username
+DEFAULT_USER=`whoami`
+
+prompt eriner
